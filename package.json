@@ -1,6 +1,7 @@
 {
   "name": "fwd-v2",
   "version": "0.1.0",
+  "home": "/smart-recruitment",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.10.5",

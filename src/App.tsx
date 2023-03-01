@@ -20,7 +20,7 @@ const App: React.FC = () => {
   }, []);
 
   return (
-      <Router>
+      <Router basename={'/smart-recruitment'}>
         <Routes>
           <Route element={<PrivateRoute isAuthenticated={auth}/>}>
             <Route path='/' element={<component.Dashboard Page="RecruitmentList" PageName="Recruitment Module" />}/>
