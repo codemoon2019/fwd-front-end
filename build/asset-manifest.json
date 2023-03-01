@@ -1,0 +1,15 @@
+{
+  "files": {
+    "main.css": "/smart-recruitment/static/css/main.e6c13ad2.css",
+    "main.js": "/smart-recruitment/static/js/main.3723ea0d.js",
+    "static/js/787.10bc7e65.chunk.js": "/smart-recruitment/static/js/787.10bc7e65.chunk.js",
+    "index.html": "/smart-recruitment/index.html",
+    "main.e6c13ad2.css.map": "/smart-recruitment/static/css/main.e6c13ad2.css.map",
+    "main.3723ea0d.js.map": "/smart-recruitment/static/js/main.3723ea0d.js.map",
+    "787.10bc7e65.chunk.js.map": "/smart-recruitment/static/js/787.10bc7e65.chunk.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.e6c13ad2.css",
+    "static/js/main.3723ea0d.js"
+  ]
+}
