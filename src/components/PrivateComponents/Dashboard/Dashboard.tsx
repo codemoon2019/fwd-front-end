@@ -15,8 +15,9 @@ import MenuIcon from "@mui/icons-material/Menu";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import NotificationsIcon from "@mui/icons-material/Notifications";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
-import { mainListItems } from "./menu";
+import MenuListItems from "./menu";
 import BOP from "./BOP/BOP";
+import BOPAttendance from "./BOPAttendance/BOPAttendance";
 import RecruitList from "./RecruitList/RecruitList";
 import Reports from "./Reports/Reports";
 
@@ -51,41 +52,6 @@ interface Column {
   format?: (value: number) => string;
 }
 
-const columns: readonly Column[] = [
-  { id: "name", label: "Name", minWidth: 170 },
-  { id: "dateRegistered", label: "Date Registered", minWidth: 170 },
-  {
-    id: "recruiter",
-    label: "Recruiter",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "branch",
-    label: "Branch Name",
-    format: (value: number) => value.toLocaleString("en-US"),
-  },
-  {
-    id: "mobile",
-    label: "Mobile",
-    format: (value: number) => value.toFixed(2),
-  },
-  {
-    id: "location",
-    label: "Location",
-    format: (value: number) => value.toFixed(2),
-  },
-  {
-    id: "email",
-    label: "Email",
-    format: (value: number) => value.toFixed(2),
-  },
-  {
-    id: "bop",
-    label: "BOP",
-    format: (value: number) => value.toFixed(2),
-  },
-];
-
 interface Data {
   name: string;
   dateRegistered: string;
@@ -95,28 +61,6 @@ interface Data {
   location: string;
   email: string;
   bop: string;
-}
-
-function createData(
-  name: string,
-  dateRegistered: string,
-  recruiter: string,
-  branch: string,
-  mobile: string,
-  location: string,
-  email: string,
-  bop: string
-): Data {
-  return {
-    name,
-    dateRegistered,
-    recruiter,
-    branch,
-    mobile,
-    location,
-    email,
-    bop,
-  };
 }
 
 const drawerWidth: number = 240;
@@ -178,7 +122,7 @@ interface DashBoardProps {
 
 const DashBoard: React.FC<DashBoardProps> = (props) => {
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const toggleDrawer = () => {
     setOpen(!open);
   };
@@ -238,7 +182,7 @@ const DashBoard: React.FC<DashBoardProps> = (props) => {
             </IconButton>
           </Toolbar>
           <Divider />
-          <List component="nav">{mainListItems}</List>
+          <List component="nav"><MenuListItems/></List>
         </Drawer>
         <Box
           component="main"
@@ -260,8 +204,11 @@ const DashBoard: React.FC<DashBoardProps> = (props) => {
             {
               props.Page === "BOP" && <><BOP/></>
             }
-              {
+            {
               props.Page === "Reports" && <><Reports/></>
+            }
+            {
+              props.Page === "BOPAttendance" && <><BOPAttendance/></>
             }
           </Grid>
         </Box>

@@ -21,11 +21,12 @@ import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Autocomplete from "@mui/material/Autocomplete";
 import {
-  getRecruits, assignAgent
+  getRecruits, assignAgent, markPresent
 } from 'http/recruitment/RecruitmentAPI';
 import Select from "@mui/material/Select";
 import Swal from 'sweetalert2'
 import { useStyles } from "./Styles";
+import RecruitList from "../RecruitList/RecruitList";
 
 const style = {
   position: "absolute" as "absolute",
@@ -41,7 +42,7 @@ const style = {
   pb: 3,
 };
 
-const RecruitList: React.FC = () => {
+const BOPAttendance: React.FC = () => {
   const classes = useStyles();
 
   const [openModal, setOpenModal] = React.useState(false);
@@ -49,32 +50,30 @@ const RecruitList: React.FC = () => {
   const [agent, setAgent] = React.useState("");
 
   const handleOpen = (id: number) => {
-    setOpenModal(true)
+    setOpenModal(false);
+    Swal.fire({
+      text: "Are you sure that you want to mark this agent as present ?",
+      icon: 'info',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      cancelButtonText: 'No',
+      confirmButtonText: 'Yes'
+    }).then((result) => {
+      if (result.isConfirmed) {
+        markPresent(recruitID).then((result) => {
+            console.log(result)
+        })
+      } else {
+        Swal.close()
+      }
+    })
     setRecruitID(id)
   };
   const handleClose = () => setOpenModal(false);
 
   const [page, setPage] = React.useState(0);
   const [rowsPerPage, setRowsPerPage] = React.useState(10);
-
-  const updateAgent = () => {
-    setOpenModal(false);
-    Swal.fire({
-      text: "Are you sure that you want to assign this applicant to this agent ?",
-      icon: 'info',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Yes'
-    }).then((result) => {
-      if (result.isConfirmed) {
-        assignAgent(recruitID, agent)
-        window.location.reload();
-      } else {
-        setOpenModal(true);
-      }
-    })
-  }
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -98,7 +97,8 @@ const RecruitList: React.FC = () => {
     | "mobile"
     | "location"
     | "email"
-    | "bop";
+    | "bop"
+    | "isPresent";
     label: string;
     minWidth?: number;
     align?: "right";
@@ -138,6 +138,11 @@ const RecruitList: React.FC = () => {
       label: "BOP",
       format: (value: number) => value.toFixed(2),
     },
+    {
+        id: "isPresent",
+        label: "Present",
+        format: (value: number) => value.toFixed(2),
+      },
   ];
 
   interface Data {
@@ -150,6 +155,7 @@ const RecruitList: React.FC = () => {
     location: string;
     email: string;
     bop: string;
+    isPresent: string;
   }
 
   function createData(
@@ -161,7 +167,8 @@ const RecruitList: React.FC = () => {
     mobile: string,
     location: string,
     email: string,
-    bop: string
+    bop: string,
+    isPresent: string
   ): Data {
     return {
       id,
@@ -173,6 +180,7 @@ const RecruitList: React.FC = () => {
       location,
       email,
       bop,
+      isPresent
     };
   }
 
@@ -181,6 +189,7 @@ const RecruitList: React.FC = () => {
       await getRecruits();
       const savedArray = JSON.parse(localStorage.getItem('recruitList') || '[]');
       setData(savedArray);
+      console.log(savedArray)
     }
     const interval = setInterval(() => {
       fetchDataAsync();
@@ -191,6 +200,7 @@ const RecruitList: React.FC = () => {
     let newArray = [];
     if (data.length > 0) {
       for (let i = 0; i < data.length; i++) {
+        console.log(i)
         newArray.push(createData(
           data[i]['id'],
           `${data[i]['first_name']} ${data[i]['middle_name']} ${data[i]['last_name']}`,
@@ -201,6 +211,7 @@ const RecruitList: React.FC = () => {
           `${data[i]['province']}, ${data[i]['city']}`,
           data[i]['email'],
           data[i]['bop'],
+          data[i]['isPresent'] === null ? "No" : "Yes",
         ))
       }
     }
@@ -221,82 +232,6 @@ const RecruitList: React.FC = () => {
         margin={2}
         padding={2}
       >
-        <Modal
-          aria-labelledby="transition-modal-title"
-          aria-describedby="transition-modal-description"
-          open={openModal}
-          onClose={handleClose}
-          closeAfterTransition
-          slots={{ backdrop: Backdrop }}
-          slotProps={{
-            backdrop: {
-              timeout: 500,
-            },
-          }}
-        >
-          <Fade in={openModal}>
-            <Box sx={style}>
-              <Typography
-                id="transition-modal-title"
-                variant="h6"
-                component="h2"
-              >
-                Assign Agent
-              </Typography>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                style={{ cursor: "pointer" }}
-              >
-                Description for assigning an agent.
-              </Typography>
-              <Grid container spacing={2}>
-                <Grid item md={12}>
-                  <FormControl margin="normal" fullWidth>
-                    <Autocomplete
-                      disablePortal
-                      id="combo-box-demo"
-                      inputValue={agent}
-                      onInputChange={(event, newInputValue) => {
-                        setAgent(newInputValue);
-                      }}
-                      options={[
-                        "Agent 1",
-                        "Agent 2",
-                        "Agent 3",
-                      ]}
-                      renderInput={(params) => (
-                        <TextField
-                          className={classes.root}
-                          {...params}
-                          label="Agent"
-                          variant="standard"
-                        />
-                      )}
-                    />
-                  </FormControl>
-                </Grid>
-              </Grid>
-              <Grid container justifyContent="flex-end">
-                <Grid item md={3} paddingRight={1}>
-                  <Button onClick={handleClose} fullWidth>
-                    Back
-                  </Button>
-                </Grid>
-                <Grid item md={3} paddingRight={1}>
-                  <Button color="error" variant="outlined" onClick={handleClose} fullWidth>
-                    DELETE
-                  </Button>
-                </Grid>
-                <Grid item md={3}>
-                  <Button variant="outlined" onClick={updateAgent} fullWidth>
-                    Assign
-                  </Button>
-                </Grid>
-              </Grid>
-            </Box>
-          </Fade>
-        </Modal>
         <Typography component="h1" variant="h5">
           Recruit List
         </Typography>
@@ -382,4 +317,4 @@ const RecruitList: React.FC = () => {
   )
 }
 
-export default RecruitList;
+export default BOPAttendance;

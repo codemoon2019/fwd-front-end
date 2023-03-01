@@ -4,7 +4,7 @@ import Swal from 'sweetalert2'
 
 const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
 
-export const postApplication = (recruitData: RecruitmentFormData) => {
+export const postApplication = async (recruitData: RecruitmentFormData) => {
     Swal.fire({
         text: 'Please wait while processing your request...',
         didOpen: () => {
@@ -12,15 +12,11 @@ export const postApplication = (recruitData: RecruitmentFormData) => {
         }
     })
 
-    axios
+    return axios
         .post(`${apiBaseUrl}/recruitment`, recruitData)
         .then((response) => {
             const data = response.data;
             recruitData["id"] = data
-            Swal.fire({
-                text: 'Registered sucessfully',
-                icon: 'success',
-            })
             return response
         })
         .catch((error) => {
@@ -29,6 +25,7 @@ export const postApplication = (recruitData: RecruitmentFormData) => {
                 icon: 'error',
             })
         });
+
 } 
 
 export const assignAgent = (id: number, agent: string) => {
@@ -45,6 +42,22 @@ export const assignAgent = (id: number, agent: string) => {
             })
         });
 } 
+
+export const markPresent = async (id: number) => {
+    return axios
+        .put(`${apiBaseUrl}/recruitment/mark-present/${id}`)
+        .then((response) => {
+            const data = response.data;
+            return response
+        })
+        .catch((error) => {
+            Swal.fire({
+                text: error.response.data.message,
+                icon: 'error',
+            })
+        });
+} 
+
 
 export const getRecruits = () => {
     axios

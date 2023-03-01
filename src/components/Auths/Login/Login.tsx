@@ -9,11 +9,16 @@ import Link from "@mui/material/Link";
 import FaceIcon from '@mui/icons-material/Face';
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
-import { createTheme, ThemeProvider, Theme, makeStyles, createStyles } from "@mui/material/styles";
+import { createTheme, ThemeProvider } from "@mui/material/styles";
 import EmailField from "../../UI/Fields/EmailField";
 import PasswordField from "../../UI/Fields/PasswordField";
 import checkValid from "../../../util/checkvalid";
+import { useNavigate } from 'react-router-dom';
 import { useStyles, internalUseStyles } from "./Styles";
+import Cookies from 'js-cookie';
+import {
+  login,
+} from 'http/authentication/Authentication';
 
 type InitialType = { text: string; error: string };
 {
@@ -61,6 +66,7 @@ const Login: React.FC<LoginProps & NaviProps> = ({
   passwordValidator = (e) => !!e,
 }) => {
   const classes = useStyles();
+  const navigate = useNavigate();
 
   const internalClasses = internalUseStyles();
 
@@ -74,8 +80,15 @@ const Login: React.FC<LoginProps & NaviProps> = ({
         checkValid(email, setEmail, emailValidator),
         checkValid(password, setPassword, passwordValidator),
       ].every((v) => v)
-    )
+    ){
       return;
+    }else{
+      await login({email: email.text, password: password.text})
+      const savedArray = JSON.parse(localStorage.getItem('userData') || '[]');
+      setEmail(INITIAL)
+      setPassword(INITIAL)
+      navigate('/');
+    }
   }, [email, password]);
 
   return (
@@ -87,8 +100,9 @@ const Login: React.FC<LoginProps & NaviProps> = ({
           xs={false}
           sm={4}
           md={7}
+          lg={8}
           sx={{
-            backgroundImage: "",
+            backgroundImage: '',
             backgroundRepeat: "no-repeat",
             backgroundColor: (t) =>
               t.palette.mode === "light"
@@ -98,7 +112,7 @@ const Login: React.FC<LoginProps & NaviProps> = ({
             backgroundPosition: "center",
           }}
         />
-        <Grid item xs={12} sm={12} md={5} component={Paper} elevation={8} square>
+        <Grid item xs={12} sm={12} md={5} lg={4} component={Paper} elevation={8} square>
           <Box
             sx={{
               mx: {xs: 2, sm: 4, md: 4},
@@ -144,14 +158,6 @@ const Login: React.FC<LoginProps & NaviProps> = ({
                  <span className={internalClasses.text}>Login</span>
                 </Button>
               </FormControl>
-              <Typography
-                variant="body2"
-                color="textSecondary"
-                align="center"
-                style={{ cursor: "pointer" }}
-              >
-                No Account? Create Now
-              </Typography>
               <Copyright sx={{ mt: 6 }} />
             </Box>
           </Box>

@@ -4,6 +4,7 @@ import Typography from "@mui/material/Typography";
 import Divider from "@mui/material/Divider";
 import FormControl from "@mui/material/FormControl";
 import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import Grid from "@mui/material/Grid";
 import Paper from "@mui/material/Paper";
 import Backdrop from "@mui/material/Backdrop";
@@ -70,7 +71,7 @@ const BOP: React.FC = () => {
       "date": date,
       "venue": venue
     });
-    window.location.reload();
+    handleClose()
   }
 
   interface Column {
@@ -114,7 +115,9 @@ const BOP: React.FC = () => {
       const savedArray = JSON.parse(localStorage.getItem('bopList') || '[]');
       setData(savedArray);
     }
-    fetchDataAsync();
+    const interval = setInterval(() => {
+      fetchDataAsync();
+    }, 1000);
   }, []);
 
 

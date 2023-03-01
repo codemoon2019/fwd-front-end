@@ -8,9 +8,19 @@ import BarChartIcon from '@mui/icons-material/BarChart';
 import EventAvailableIcon from '@mui/icons-material/EventAvailable';
 import LogoutIcon from '@mui/icons-material/Logout';
 import AddIcon from '@mui/icons-material/Add';
-import { Link } from "react-router-dom";
+import Cookies from 'js-cookie';
+import { Link, useNavigate } from "react-router-dom";
 
-export const mainListItems = (
+const MenuListItems: React.FC = () => {
+  const navigate = useNavigate();
+  
+  const handleLogout = () => {
+    Cookies.remove('token');
+    sessionStorage.clear();
+    navigate('/login')
+  };  
+
+  return(
   <React.Fragment>
     <ListItemButton component={Link} to="/">
       <ListItemIcon>
@@ -24,7 +34,7 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Recruits" />
     </ListItemButton>
-    <ListItemButton>
+    <ListItemButton component={Link} to="/bop-attendance">
       <ListItemIcon>
         <EventAvailableIcon />
       </ListItemIcon>
@@ -42,11 +52,13 @@ export const mainListItems = (
       </ListItemIcon>
       <ListItemText primary="Reports" />
     </ListItemButton>
-      <ListItemButton component={Link} to="/login">
+      <ListItemButton onClick={handleLogout}>
         <ListItemIcon>
           <LogoutIcon />
         </ListItemIcon>
         <ListItemText primary="Log Out" />
       </ListItemButton>
   </React.Fragment>
-);
+  )
+}
+export default MenuListItems;
